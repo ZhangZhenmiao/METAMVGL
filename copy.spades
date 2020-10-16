@@ -1,9 +1,0 @@
-cat evaluate.maxbin evaluate.edge_graph evaluate.PE_graph evaluate.edge_PE_graph evaluate.amgl evaluate_noremove.amgl evaluate_magpurify.maxbin evaluate_magpurify.edge_graph evaluate_magpurify.PE_graph evaluate_magpurify.edge_PE_graph evaluate_magpurify.amgl evaluate_magpurify_noremove.amgl evaluate_magpurify_noremove_cleaned.amgl | grep Precision
-cat evaluate.maxbin evaluate.edge_graph evaluate.PE_graph evaluate.edge_PE_graph evaluate.amgl evaluate_noremove.amgl evaluate_magpurify.maxbin evaluate_magpurify.edge_graph evaluate_magpurify.PE_graph evaluate_magpurify.edge_PE_graph evaluate_magpurify.amgl evaluate_magpurify_noremove.amgl evaluate_magpurify_noremove_cleaned.amgl | grep Recall
-cat evaluate.maxbin evaluate.edge_graph evaluate.PE_graph evaluate.edge_PE_graph evaluate.amgl evaluate_noremove.amgl evaluate_magpurify.maxbin evaluate_magpurify.edge_graph evaluate_magpurify.PE_graph evaluate_magpurify.edge_PE_graph evaluate_magpurify.amgl evaluate_magpurify_noremove.amgl evaluate_magpurify_noremove_cleaned.amgl | grep F1
-cat evaluate.maxbin evaluate.edge_graph evaluate.PE_graph evaluate.edge_PE_graph evaluate.amgl evaluate_noremove.amgl evaluate_magpurify.maxbin evaluate_magpurify.edge_graph evaluate_magpurify.PE_graph evaluate_magpurify.edge_PE_graph evaluate_magpurify.amgl evaluate_magpurify_noremove.amgl evaluate_magpurify_noremove_cleaned.amgl | grep ARI
-
-cat evaluate.maxbin evaluate.edge_graph evaluate.amgl | grep Precision
-cat evaluate.maxbin evaluate.edge_graph evaluate.amgl | grep Recall
-cat evaluate.maxbin evaluate.edge_graph evaluate.amgl | grep F1
-cat evaluate.maxbin evaluate.edge_graph evaluate.amgl | grep ARI
