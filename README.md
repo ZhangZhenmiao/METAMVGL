@@ -5,7 +5,7 @@
 - python3 with [numpy](https://numpy.org/install/), [scipy](https://www.scipy.org/install.html) and [networkx](http://networkx.github.io/)
 
 ## Install
-Download METAMVGL, cd METAMVGL and:
+Download METAMVGL, ```cd METAMVGL``` and:
 ```
 make
 ```
