@@ -1,4 +1,5 @@
 import csv
+import os
 import math
 import argparse
 import numpy as np
@@ -85,13 +86,17 @@ def non_isolated_contigs(G, contigs_bin):
     return return_list
 
 ap = argparse.ArgumentParser()
+ap.add_argument("--contigs", required=True, help="path to contigs file")
+ap.add_argument("--assembler", required=True, help="assembler used")
 ap.add_argument("--assembly_graph", required=True, help="path to the .ag file")
 ap.add_argument("--PE_graph", required=True, help="path to the .pe file")
 ap.add_argument("--binned", required=True, help="path to the .csv file as initial binning")
 ap.add_argument("--max_iter", required=True, help="max iteration")
 ap.add_argument("--thresh", required=True, help="stop threshold")
-ap.add_argument("--output", required=True, help="output file")
+ap.add_argument("--output", required=True, help="output folder")
 args = vars(ap.parse_args())
+contigs = args["contigs"]
+assembler = args["assembler"]
 assembly_graph_file = args["assembly_graph"]
 PE_graph_file = args["PE_graph"]
 contig_bins_file = args["binned"]
@@ -207,7 +212,41 @@ for i in range(len(non_isolated)):
 print('final binned contigs:', len(contigs_bin))
 remove_ambiguous_label(merged_graph, contigs_bin)
 print('final binned contigs after remove ambiguous:', len(contigs_bin))
-final_out = open(output, 'w')
+if not os.path.isdir(output): os.system("mkdir " + output)
+final_out = open(output + "/binning_result.csv", 'w')
 for contig in contigs_bin:
     final_out.write(contig + ',' + str(contigs_bin[contig] + 1) + '\n')
 final_out.close()
+
+contigs_file = open(contigs, 'r')
+contigs_map = {}
+header = ""
+content = ""
+for line in contigs_file:
+    if line == "": continue
+    if line[0] == '>':
+        if header != "": contigs_map[header] = content
+        if assembler == 'metaSPAdes': header = line.split('_')[0][1:] + '_' + line.split('_')[1]
+        elif assembler == 'MEGAHIT': header = line.split()[0][1:]
+        content = ""
+    else: content += line.strip()
+contigs_map[header] = content
+contigs_file.close()
+
+bin_map = {}
+cluster = output + "/binning_result.csv"
+cluster_file = open(cluster, 'r')
+for line in cluster_file:
+    if line == "": continue
+    items = line.strip().split(',')
+    if items[1] not in bin_map: bin_map[items[1]] = []
+    bin_map[items[1]].append(items[0])
+cluster_file.close()
+
+for file in os.listdir(output):
+    if ".fasta" in file: os.system("rm " + output + '/' + file)
+for bin in bin_map:
+    out = open(output + "/cluster." + bin + ".fasta", 'w')
+    for header in bin_map[bin]:
+        out.write('>' + header + '\n' + contigs_map[header] + '\n')
+    out.close()
