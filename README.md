@@ -1,14 +1,15 @@
 # METAMVGL
 
-## Install
+## Dependencies
 - gcc with C++11 support, [HTSlib](https://github.com/samtools/htslib) required
 - python3 with [numpy](https://numpy.org/install/), [scipy](https://www.scipy.org/install.html) and [networkx](http://networkx.github.io/)
 
+## Install
 Download METAMVGL, cd METAMVGL and:
 ```
 make
 ```
-The commnad will generate prep_graph. We need add prep_graph to environmental variables:
+The commnad will generate ```prep_graph```. We need add ```prep_graph``` to environmental variables:
 ```
 export PATH=`pwd`:$PATH
 ```
@@ -25,10 +26,10 @@ We accept any initial binning tools. To convert the binning result to the input 
 ```
 python prepResult.py --binned /path/to/folder_with_binning_result --assembler assembler_type_(SPAdes/MEGAIHT) --output /path/to/output_folder
 ```
-This command will create a file named initial_contig_bins.csv in /path/to/output_folder.
+This command will create a file named ```initial_contig_bins.csv``` in ```/path/to/output_folder```.
 
 ### Prepare graphs
-We generate the assembly graph (.ag) and PE graph (.pe) by prep_graph:
+We generate the assembly graph (.ag) and PE graph (.pe) by ```prep_graph```:
 ```
 usage: ./prep_graph --assembler=string --assembly-graph=string --bam=string --output=string [options] ...
 options:
@@ -46,7 +47,7 @@ options:
 ```
 
 ### Multi-view graph-based binning
-We create the binning result of METAMVGL by METAMVGL.py:
+We create the binning result of METAMVGL by ```METAMVGL.py```:
 ```
 usage: METAMVGL.py [-h] --contigs CONTIGS --assembler ASSEMBLER
                    --assembly_graph ASSEMBLY_GRAPH --PE_graph PE_GRAPH
@@ -66,4 +67,6 @@ optional arguments:
   --thresh THRESH       stop threshold
   --output OUTPUT       output folder
 ```
-In the OUTPUT folder, you can find the binning result in csv format (binning_result.csv), and also the separate clustered contigs as cluster.\*.fasta.
+In the OUTPUT folder, we provide two types of binning result:
+- ```binning_result.csv```, each line is contig_name, cluster_id
+- ```cluster.*.fasta```, the contigs in fasta format of each cluster
