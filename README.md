@@ -66,4 +66,4 @@ optional arguments:
   --thresh THRESH       stop threshold
   --output OUTPUT       output folder
 ```
-In the OUTPUT folder, you can find the result in csv format (binning_result.csv), and separate clustered contigs as cluster.\*.fasta.
+In the OUTPUT folder, you can find the binning result in csv format (binning_result.csv), and also the separate clustered contigs as cluster.\*.fasta.
