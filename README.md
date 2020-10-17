@@ -1,7 +1,7 @@
 # METAMVGL
 
 ## Dependencies
-- gcc with C++11 support, [HTSlib](https://github.com/samtools/htslib) required
+- gcc with C++11 support, [htslib](https://github.com/samtools/htslib) required
 - python3 with [numpy](https://numpy.org/install/), [scipy](https://www.scipy.org/install.html) and [networkx](http://networkx.github.io/)
 
 ## Install
