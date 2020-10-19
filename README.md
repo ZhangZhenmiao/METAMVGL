@@ -9,7 +9,7 @@ Download METAMVGL, ```cd METAMVGL``` and:
 ```
 make
 ```
-The commnad will generate ```prep_graph```. We need add ```prep_graph``` to environmental variables:
+The command will generate ```prep_graph```. We need add ```prep_graph``` to environmental variables:
 ```
 export PATH=`pwd`:$PATH
 ```
