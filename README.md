@@ -5,11 +5,12 @@
 - python3 with [numpy](https://numpy.org/install/), [scipy](https://www.scipy.org/install.html) and [networkx](http://networkx.github.io/)
 
 ## Install
-Download METAMVGL, ```cd METAMVGL``` and:
+Before installing, make sure [htslib](https://github.com/samtools/htslib) is properly installed, with ```/path/to/htslib/include``` in ```$CPLUS_INCLUDE_PATH```, ```/path/to/htslib/lib``` in both ```$LIBRARY_PATH``` and ```$LD_LIBRARY_PATH```. To install METAMVGL:
 ```
-make
+git clone https://github.com/ZhangZhenmiao/METAMVGL.git
+cd METAMVGL && make
 ```
-The command will generate ```prep_graph```. We need add ```prep_graph``` to environmental variables:
+The command will generate ```prep_graph```. We need add it to the environmental variables:
 ```
 export PATH=`pwd`:$PATH
 ```
@@ -26,7 +27,7 @@ We accept any initial binning tools. To convert the binning result to the input 
 ```
 python prepResult.py --binned /path/to/folder_with_binning_result --assembler assembler_type_(SPAdes/MEGAIHT) --output /path/to/output_folder
 ```
-This command will create a file named ```initial_contig_bins.csv``` in ```/path/to/output_folder```.
+It will create a file ```initial_contig_bins.csv``` in ```/path/to/output_folder```.
 
 ### Prepare graphs
 We generate the assembly graph (.ag) and PE graph (.pe) by ```prep_graph```:
@@ -47,7 +48,7 @@ options:
 ```
 
 ### Multi-view graph-based binning
-We create the binning result of METAMVGL by ```METAMVGL.py```:
+We create the binning result by ```METAMVGL.py```:
 ```
 usage: METAMVGL.py [-h] --contigs CONTIGS --assembler ASSEMBLER
                    --assembly_graph ASSEMBLY_GRAPH --PE_graph PE_GRAPH
