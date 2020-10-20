@@ -10,7 +10,7 @@ Before installing, make sure [htslib](https://github.com/samtools/htslib) is pro
 git clone https://github.com/ZhangZhenmiao/METAMVGL.git
 cd METAMVGL && make
 ```
-The command will generate ```prep_graph```. We need add it to the environmental variables:
+The commands will generate ```prep_graph```. We need add it to the environmental variables:
 ```
 export PATH=`pwd`:$PATH
 ```
