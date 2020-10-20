@@ -8,7 +8,7 @@
 Before installing, make sure [htslib](https://github.com/samtools/htslib) is properly installed, with ```/path/to/htslib/include``` in ```$CPLUS_INCLUDE_PATH```, ```/path/to/htslib/lib``` in both ```$LIBRARY_PATH``` and ```$LD_LIBRARY_PATH```. To install METAMVGL:
 ```
 git clone https://github.com/ZhangZhenmiao/METAMVGL.git
-cd METAMVGL && make
+cd METAMVGL && make && chmod +x METAMVGL.py
 ```
 The commands will generate ```prep_graph```. We need add it to the environmental variables:
 ```
@@ -32,7 +32,7 @@ It will create a file ```initial_contig_bins.csv``` in ```/path/to/output_folder
 ### Prepare graphs
 We generate the assembly graph (.ag) and PE graph (.pe) by ```prep_graph```:
 ```
-usage: ./prep_graph --assembler=string --assembly-graph=string --bam=string --output=string [options] ...
+usage: prep_graph --assembler=string --assembly-graph=string --bam=string --output=string [options] ...
 options:
   -a, --assembler          the assembler used to produce contigs, currently support metaSPAdes and MEGAHIT (string)
   -c, --contigs            the path to the contigs, only needed for MEGAHIT (string [=final.contigs.fa])
