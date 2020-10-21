@@ -59,7 +59,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --contigs CONTIGS     path to contigs file
   --assembler ASSEMBLER
-                        assembler used
+                        assembler used (metaSPAdes or MEGAHIT)
   --assembly_graph ASSEMBLY_GRAPH
                         path to the .ag file
   --PE_graph PE_GRAPH   path to the .pe file
