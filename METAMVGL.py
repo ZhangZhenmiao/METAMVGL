@@ -166,7 +166,6 @@ if __name__ == "__main__":
             assembly_graph.add_edge(contig, strings[0])
         line = graph.readline()
     graph.close()
-    exit()
 
     logging.debug("Loading paired-end graph")
     PE_graph = nx.Graph()
@@ -199,9 +198,13 @@ if __name__ == "__main__":
 
     logging.debug("Merging paired-end with assembly graph")
     merged_graph = nx.Graph()
+    logging.debug("Adding assembly graph nodes")
     merged_graph.add_nodes_from(assembly_graph.nodes)
+    logging.debug("Adding PE graph nodes")
     merged_graph.add_nodes_from(PE_graph.nodes)
+    logging.debug("Adding assembly graph edges")
     merged_graph.add_edges_from(assembly_graph.edges)
+    logging.debug("Adding PE graph edges")
     merged_graph.add_edges_from(PE_graph.edges)
 
     logging.info("Initial binned contigs: {}".format(len(contigs_bin)))
