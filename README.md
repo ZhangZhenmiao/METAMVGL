@@ -52,7 +52,7 @@ We create the binning result by ```METAMVGL.py```:
 ```
 usage: METAMVGL.py [-h] --contigs CONTIGS --assembler ASSEMBLER
                    --assembly_graph ASSEMBLY_GRAPH --PE_graph PE_GRAPH
-                   --binned BINNED --max_iter MAX_ITER --thresh THRESH
+                   --binned BINNED [--max_iter MAX_ITER] [--thresh THRESH]
                    --output OUTPUT
 
 optional arguments:
@@ -64,8 +64,8 @@ optional arguments:
                         path to the .ag file
   --PE_graph PE_GRAPH   path to the .pe file
   --binned BINNED       path to the .csv file as initial binning
-  --max_iter MAX_ITER   max iteration
-  --thresh THRESH       stop threshold
+  --max_iter MAX_ITER   max iteration (default 100)
+  --thresh THRESH       stop threshold (default 0.00000001)
   --output OUTPUT       output folder
 ```
 In the OUTPUT folder, we provide two types of binning result:
