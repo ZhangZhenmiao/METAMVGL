@@ -88,7 +88,7 @@ def non_isolated_contigs(G, contigs_bin):
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--contigs", required=True, help="path to contigs file")
-ap.add_argument("--assembler", required=True, help="assembler used")
+ap.add_argument("--assembler", required=True, help="assembler used (metaSPAdes or MEGAHIT)")
 ap.add_argument("--assembly_graph", required=True, help="path to the .ag file")
 ap.add_argument("--PE_graph", required=True, help="path to the .pe file")
 ap.add_argument("--binned", required=True, help="path to the .csv file as initial binning")
@@ -97,7 +97,7 @@ ap.add_argument("--thresh", default=0.00000001, help="stop threshold (default 0.
 ap.add_argument("--output", required=True, help="output folder")
 args = vars(ap.parse_args())
 contigs = args["contigs"]
-assembler = args["assembler"]
+assembler = args["assembler"].lower()
 assembly_graph_file = args["assembly_graph"]
 PE_graph_file = args["PE_graph"]
 contig_bins_file = args["binned"]
@@ -227,8 +227,8 @@ for line in contigs_file:
     if line == "": continue
     if line[0] == '>':
         if header != "": contigs_map[header] = content
-        if assembler == 'metaSPAdes': header = line.split('_')[0][1:] + '_' + line.split('_')[1]
-        elif assembler == 'MEGAHIT': header = line.split()[0][1:]
+        if assembler == 'metaspades': header = line.split('_')[0][1:] + '_' + line.split('_')[1]
+        elif assembler == 'megahit': header = line.split()[0][1:]
         content = ""
     else: content += line.strip()
 contigs_map[header] = content
