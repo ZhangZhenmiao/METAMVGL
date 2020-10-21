@@ -30,6 +30,12 @@ python prepResult.py --binned /path/to/folder_with_binning_result --assembler as
 It will create a file ```initial_contig_bins.csv``` in ```/path/to/output_folder```.
 
 ### Prepare graphs
+
+For MEGAHIT, the assembly graph in .fastg format is derived from final.contigs.fa:
+```
+megahit_toolkit contig2fastg k_mer final.contigs.fa > final.contigs.fastg
+```
+
 We generate the assembly graph (.ag) and PE graph (.pe) by ```prep_graph```:
 ```
 usage: prep_graph --assembler=string --assembly-graph=string --bam=string --output=string [options] ...
