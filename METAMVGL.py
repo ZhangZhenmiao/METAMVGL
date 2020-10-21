@@ -6,6 +6,7 @@ import argparse
 import numpy as np
 import scipy as sp
 import networkx as nx
+import logging
 
 
 def remove_ambiguous_label(G, contigs_bin):
@@ -111,7 +112,21 @@ ap.add_argument(
     "--thresh", default=0.00000001, help="stop threshold (default 0.00000001)"
 )
 ap.add_argument("--output", required=True, help="output folder")
-args = vars(ap.parse_args())
+ap.add_argument("--quiet", action="store_true", help="supress information", default=False)
+ap.add_argument("--debug", action="store_true", help="Make it more verbose", default=False)
+
+args = ap.parse_args()
+
+# define logging
+logLevel = logging.INFO
+if args.quiet:
+    logLevel = logging.WARNING
+elif args.debug:
+    logLevel = logging.DEBUG
+logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%Y-%m-%dT%H:%M:%S+00:00: ", level=logLevel)
+
+logging.info("Launching METAMVGL")
+
 contigs = args["contigs"]
 assembler = args["assembler"]
 assembly_graph_file = args["assembly_graph"]
@@ -121,6 +136,7 @@ max_iter = int(args["max_iter"])
 thresh = float(args["thresh"])
 output = args["output"]
 
+logging.debug("Loading bin information from csv")
 all_bins = set()
 contigs_bin = dict()
 csvfile = open(contig_bins_file, "r")
@@ -135,6 +151,7 @@ for i in all_bins:
         n_bins = i
 n_bins += 1
 
+logging.debug("Loading assembly graph")
 assembly_graph = nx.Graph()
 graph = open(assembly_graph_file, "r")
 line = graph.readline()
@@ -149,6 +166,7 @@ while line != "":
     line = graph.readline()
 graph.close()
 
+logging.debug("Loading paired-end graph")
 PE_graph = nx.Graph()
 graph = open(PE_graph_file, "r")
 line = graph.readline()
@@ -177,6 +195,7 @@ while line != "":
     line = graph.readline()
 graph.close()
 
+logging.debug("Merging paired-end with assembly graph")
 merged_graph = nx.Graph()
 merged_graph.add_nodes_from(assembly_graph.nodes)
 merged_graph.add_nodes_from(PE_graph.nodes)
