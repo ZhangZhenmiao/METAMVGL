@@ -10,6 +10,7 @@ import logging
 
 
 def remove_ambiguous_label(G, contigs_bin):
+    logging.debug("Removing ambigious labels")
     remove_labels = list()
     for key in contigs_bin:
         closest_neighbours = G.neighbors(key)
@@ -26,6 +27,7 @@ def remove_ambiguous_label(G, contigs_bin):
 
 
 def getClosestLabelledVertices(G, node, contigs_bin):
+    logging.debug("Get closest labeled vertice")
     queu_l = [list(G.neighbors(node))]
     visited_l = [node]
     labelled = []
@@ -54,6 +56,7 @@ def getClosestLabelledVertices(G, node, contigs_bin):
 
 
 def remove_ambiguous_label_deeper(G, contigs_bin):
+    logging.debug("Removing ambigious deep labels")
     remove_labels = list()
     for key in contigs_bin:
         closest_neighbours = getClosestLabelledVertices(G, key, contigs_bin)
@@ -72,6 +75,7 @@ def remove_ambiguous_label_deeper(G, contigs_bin):
 
 
 def non_isolated_contigs(G, contigs_bin):
+    logging.debug("Identifying non isolated contigs")
     non_isolated = set()
     for i in G.nodes:
         if i not in non_isolated and i in contigs_bin:
@@ -211,12 +215,12 @@ if __name__ == "__main__":
     remove_ambiguous_label_deeper(assembly_graph, contigs_bin)
     logging.info("binned contigs after remove ambiguous: {}".format(len(contigs_bin)))
     non_isolated = non_isolated_contigs(merged_graph, contigs_bin)
-    print("non isolated contigs:", len(non_isolated))
+    logging.info("non isolated contigs: {}".format(len(non_isolated)))
     binned_cnt = 0
     for contig in non_isolated:
         if contig in contigs_bin:
             binned_cnt += 1
-    print("non isolated binned contigs:", binned_cnt)
+    logging.info("non isolated binned contigs: {}".format( binned_cnt))
 
     degree = list()
     for i in range(len(non_isolated)):
@@ -243,6 +247,7 @@ if __name__ == "__main__":
 
     Obj_fun = list()
     alpha = np.array([0.5, 0.5], dtype=np.float64)
+    logging.debug("Running search")
     for i in range(max_iter):
         all_degree = alpha[0] * assembly_graph_degree + alpha[1] * PE_graph_degree
         all_adjacant = alpha[0] * assembly_graph_adjacent + alpha[1] * PE_graph_adjacent
