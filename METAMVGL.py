@@ -108,9 +108,9 @@ if __name__ == "__main__":
     ap.add_argument(
         "--binned", required=True, help="path to the .csv file as initial binning"
     )
-    ap.add_argument("--max_iter", default=100, help="max iteration (default 100)")
+    ap.add_argument("--max_iter", type=int, default=100, help="max iteration (default 100)")
     ap.add_argument(
-        "--thresh", default=0.00000001, help="stop threshold (default 0.00000001)"
+        "--thresh", default=0.00000001, type=float, help="stop threshold (default 0.00000001)"
     )
     ap.add_argument("--output", required=True, help="output folder")
     ap.add_argument("--quiet", action="store_true", help="supress information", default=False)
@@ -128,14 +128,14 @@ if __name__ == "__main__":
 
     logging.info("Launching METAMVGL")
 
-    contigs = args["contigs"]
-    assembler = args["assembler"]
-    assembly_graph_file = args["assembly_graph"]
-    PE_graph_file = args["PE_graph"]
-    contig_bins_file = args["binned"]
-    max_iter = int(args["max_iter"])
-    thresh = float(args["thresh"])
-    output = args["output"]
+    contigs = args.contigs
+    assembler = args.assembler
+    assembly_graph_file = args.assembly_graph
+    PE_graph_file = args.PE_graph
+    contig_bins_file = args.binned
+    max_iter = args.max_iter
+    thresh = args.thresh
+    output = args.output
 
     logging.debug("Loading bin information from csv")
     all_bins = set()
@@ -166,6 +166,7 @@ if __name__ == "__main__":
             assembly_graph.add_edge(contig, strings[0])
         line = graph.readline()
     graph.close()
+    exit()
 
     logging.debug("Loading paired-end graph")
     PE_graph = nx.Graph()
@@ -203,9 +204,9 @@ if __name__ == "__main__":
     merged_graph.add_edges_from(assembly_graph.edges)
     merged_graph.add_edges_from(PE_graph.edges)
 
-    print("initial binned contigs:", len(contigs_bin))
+    logging.info("Initial binned contigs: {}".format(len(contigs_bin)))
     remove_ambiguous_label_deeper(assembly_graph, contigs_bin)
-    print("binned contigs after remove ambiguous:", len(contigs_bin))
+    logging.info("binned contigs after remove ambiguous: {}".format(len(contigs_bin)))
     non_isolated = non_isolated_contigs(merged_graph, contigs_bin)
     print("non isolated contigs:", len(non_isolated))
     binned_cnt = 0
