@@ -122,8 +122,8 @@ assembly_graph = nx.Graph()
 graph = open(assembly_graph_file, 'r')
 line = graph.readline()
 while line != "":
-    line = line.strip();
-    strings = line[:-1].split();
+    line = line.strip()
+    strings = line[:-1].split()
     if line[-1] == ':':
         contig = strings[0]
         assembly_graph.add_node(contig)
@@ -136,8 +136,8 @@ PE_graph = nx.Graph()
 graph = open(PE_graph_file, 'r')
 line = graph.readline()
 while line != "":
-    line = line.strip();
-    strings = line[:-1].split();
+    line = line.strip()
+    strings = line[:-1].split()
     if line[-1] == ':':
         contig = strings[0]
         PE_graph.add_node(contig)
