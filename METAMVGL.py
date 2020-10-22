@@ -173,39 +173,44 @@ print('non isolated binned contigs:', binned_cnt)
 degree = list()
 for i in range(len(non_isolated)):
     degree.append(assembly_graph.degree[non_isolated[i]])
-assembly_graph_degree = np.diag(degree)
-assembly_graph_adjacent = nx.adjacency_matrix(assembly_graph, nodelist=non_isolated).A
+assembly_graph_degree = sp.sparse.csc_matrix(np.diag(degree), dtype=np.float64)
+assembly_graph_adjacent = nx.adjacency_matrix(assembly_graph, nodelist=non_isolated)
 degree = list()
 for i in range(len(non_isolated)):
     degree.append(PE_graph.degree[non_isolated[i]])
-PE_graph_degree = np.diag(degree)
-PE_graph_adjacent = nx.adjacency_matrix(PE_graph, nodelist=non_isolated).A
+PE_graph_degree = sp.sparse.csc_matrix(np.diag(degree), dtype=np.float64)
+PE_graph_adjacent = nx.adjacency_matrix(PE_graph, nodelist=non_isolated)
 
 F = np.zeros([len(non_isolated), n_bins])
 for i in range(len(non_isolated)):
     if non_isolated[i] in contigs_bin: F[i, contigs_bin[non_isolated[i]]] = 1
-F_l = F[:binned_cnt,]
-assembly_graph_L = nx.normalized_laplacian_matrix(assembly_graph, nodelist=non_isolated).A
-PE_graph_L = nx.normalized_laplacian_matrix(PE_graph, nodelist=non_isolated).A
+F_l = sp.sparse.csc_matrix(F[:binned_cnt,], dtype=np.float64)
+assembly_graph_L = nx.normalized_laplacian_matrix(assembly_graph, nodelist=non_isolated)
+PE_graph_L = nx.normalized_laplacian_matrix(PE_graph, nodelist=non_isolated)
 
+# assembly_graph_degree, PE_graph_degree: sparse
+# assembly_graph_adjacent, PE_graph_adjacent: sparse
+# assembly_graph_L, PE_graph_L: sparse
+# F: sparse
 Obj_fun = list()
-alpha = np.array([0.5, 0.5], dtype=np.float64)
+alpha = np.array([0.5, 0.5])
 for i in range(max_iter):
     all_degree = alpha[0]*assembly_graph_degree + alpha[1]*PE_graph_degree
     all_adjacant = alpha[0]*assembly_graph_adjacent + alpha[1]*PE_graph_adjacent
-    all_trans = np.dot(np.linalg.inv(all_degree), all_adjacant)
+    all_trans = sp.sparse.linalg.inv(all_degree).dot(all_adjacant)
     all_trans_uu = all_trans[binned_cnt:, binned_cnt:]
     all_trans_ul = all_trans[binned_cnt:, :binned_cnt]
-    F_u = np.dot(np.dot(np.linalg.inv(np.eye(all_trans_uu.shape[0]) - all_trans_uu), all_trans_ul), F_l)
-    F = np.concatenate((F_l, F_u), axis=0)
-    alpha[0] = 0.5/math.sqrt(np.trace(np.dot(np.dot(F.T,assembly_graph_L),F)))
-    alpha[1] = 0.5/math.sqrt(np.trace(np.dot(np.dot(F.T,PE_graph_L),F)))
-    obj = math.sqrt(np.trace(np.dot(np.dot(F.T,assembly_graph_L),F)))
-    obj += math.sqrt(np.trace(np.dot(np.dot(F.T,PE_graph_L),F)))
-    Obj_fun.append(obj)
-    print("Iteration", i, " Alpla0", alpha[0], " Alpla1", alpha[1], " Obj_value", obj)
+    F_u = sp.sparse.linalg.inv(sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu).dot(all_trans_ul).dot(F_l)
+    F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
+    obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
+    obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
+    alpha[0] = 0.5/obj1
+    alpha[1] = 0.5/obj2
+    Obj_fun.append(obj1 + obj2)
+    print("Iteration", i, " Alpla0", alpha[0], " Alpla1", alpha[1], " Obj_value", Obj_fun[i])
     if i >= 1 and (Obj_fun[i-1]-Obj_fun[i])/Obj_fun[i-1] < thresh: break
 
+F = F.toarray()
 maxCluster = np.argmax(F, axis=1)
 maxValue = np.ndarray.max(F, axis=1)
 for i in range(len(non_isolated)):
