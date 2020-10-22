@@ -214,7 +214,7 @@ for i in range(max_iter):
 maxCluster = F.argmax(axis=1)
 maxValue = F.max(axis=1).toarray()
 for i in range(len(non_isolated)):
-    if maxValue[i] != 0: contigs_bin[non_isolated[i]] = maxCluster[i, 0]
+    if maxValue[i, 0] != 0: contigs_bin[non_isolated[i]] = maxCluster[i, 0]
 print('final binned contigs:', len(contigs_bin))
 remove_ambiguous_label(merged_graph, contigs_bin)
 print('final binned contigs after remove ambiguous:', len(contigs_bin))
