@@ -210,8 +210,9 @@ for i in range(max_iter):
     print("Iteration", i, " Alpla0", alpha[0], " Alpla1", alpha[1], " Obj_value", Obj_fun[i])
     if i >= 1 and (Obj_fun[i-1]-Obj_fun[i])/Obj_fun[i-1] < thresh: break
 
-maxCluster = F.argmax(axis=1)
-maxValue = F.max(axis=1).toarray()
+F = F.toarray()
+maxCluster = np.argmax(F, axis=1)
+maxValue = np.ndarray.max(F, axis=1)
 for i in range(len(non_isolated)):
     if maxValue[i] != 0: contigs_bin[non_isolated[i]] = maxCluster[i]
 print('final binned contigs:', len(contigs_bin))
