@@ -23,7 +23,7 @@ Currently we support [metaSPAdes](https://github.com/ablab/spades) and [MEGAHIT]
 
 ### Initial binning
 
-We accept any initial binning tools. To convert the binning result to the input format of METAMVGL, we suggest to use [prepResult.py](https://github.com/Vini2/GraphBin/tree/master/support):
+We accept any initial binning tools. To convert the binning result to the input format of METAMVGL, we modified [prepResult.py](https://github.com/Vini2/GraphBin/tree/master/support):
 ```
 python prepResult.py --binned /path/to/folder_with_binning_result --assembler assembler_type_(SPAdes/MEGAIHT) --output /path/to/output_folder
 ```
