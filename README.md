@@ -27,7 +27,7 @@ For metaSPAdes, the assembly graph (assembly_graph.fastg) is already in the outp
 
 For MEGAHIT, the assembly graph is derived from final.contigs.fa:
 ```
-megahit_toolkit contig2fastg k_mer final.contigs.fa > final.contigs.fastg
+megahit_toolkit contig2fastg <k_mer> final.contigs.fa > final.contigs.fastg
 ```
 
 ## Run METAMVGL
