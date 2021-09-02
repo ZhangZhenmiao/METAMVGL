@@ -5,6 +5,7 @@ import math
 import argparse
 import numpy as np
 import scipy as sp
+from scipy.sparse import linalg
 import networkx as nx
 
 def remove_ambiguous_label(G, contigs_bin):
