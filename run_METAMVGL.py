@@ -33,7 +33,7 @@ parser.add_argument(
     "--initial_binning",
     required=False,
     default="MetaBat2",
-    help="the initial binning tool to create initial binning results (choose from MetaBat2 and MaxBin2)",
+    help="the initial binning tool to create initial binning results (choose from MetaBat2 and MaxBin2, default MetaBat2)",
 )
 parser.add_argument(
     "-r1",
@@ -70,55 +70,54 @@ parser.add_argument(
     "--mapping_quality",
     required=False,
     default=10,
-    help="the threshold of mapping quality for reads alignment",
+    help="the threshold of mapping quality for reads alignment (default 10)",
 )
 parser.add_argument(
     "-s",
     "--identity",
     required=False,
     default=0.95,
-    help="the threshold of alignment identity for reads alignment",
+    help="the threshold of alignment identity for reads alignment (default 0.95)",
 )
 parser.add_argument(
     "-i",
     "--insert_size",
     required=False,
     default=270,
-    help="the insert size of paired-end reads",
+    help="the insert size of paired-end reads (default 270)",
 )
 parser.add_argument(
     "-n",
     "--pe",
     required=False,
     default=3,
-    help="the minimum number of paired-end reads to support a PE link",
+    help="the minimum number of paired-end reads to support a PE link (default 3)",
 )
 parser.add_argument(
     "-u",
     "--max_iter",
     required=False,
     default=100,
-    help="the maximun number of iteration of label propagation",
+    help="the maximun number of iteration of label propagation (default 100)",
 )
 parser.add_argument(
     "-d",
     "--threshold",
     required=False,
     default=0.00000001,
-    help="the threshold to stop iteration of label propagation",
+    help="the threshold to stop iteration of label propagation (default 0.00000001)",
 )
 parser.add_argument(
     "-t",
     "--threads",
     required=False,
     default=16,
-    help="the number of threads for initial binning tools",
+    help="the number of threads for initial binning tools (default 16)",
 )
 parser.add_argument(
     "-o",
     "--output",
     required=True,
-    default=3,
     help="output dir",
 )
 args = parser.parse_args()
@@ -299,6 +298,14 @@ if args.assembler.lower() == "metaspades":
             args.assembly_graph,
             "-b",
             bamfile,
+            "-m",
+            str(args.mapping_quality),
+            "-i",
+            str(args.identity),
+            "-s",
+            str(args.insert_size),
+            "-n",
+            str(args.pe),
             "-o",
             f"{args.output}/graph",
         ],
@@ -317,6 +324,10 @@ if args.assembler.lower() == "metaspades":
             f"{args.output}/graph.pe",
             "--binned",
             initial_results,
+            "--max_iter",
+            str(args.max_iter),
+            "--thresh",
+            str(args.threshold),
             "--output",
             f"{args.output}/METAMVGL",
         ],
@@ -334,6 +345,14 @@ else:
             args.assembly_graph,
             "-b",
             bamfile,
+            "-m",
+            str(args.mapping_quality),
+            "-i",
+            str(args.identity),
+            "-s",
+            str(args.insert_size),
+            "-n",
+            str(args.pe),
             "-o",
             f"{args.output}/graph",
         ],
@@ -352,6 +371,10 @@ else:
             f"{args.output}/graph.pe",
             "--binned",
             initial_results,
+            "--max_iter",
+            str(args.max_iter),
+            "--thresh",
+            str(args.threshold),
             "--output",
             f"{args.output}/METAMVGL",
         ],
