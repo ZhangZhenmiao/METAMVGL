@@ -7,7 +7,7 @@
 - Alignment tools [bwa](https://github.com/lh3/bwa) and [samtools](http://www.htslib.org).
 
 ## Environment variables
-- HTSlib: After compiling, there would be ```include``` and ```lib``` under your specified folder. You need append ```/path/to/include``` to ```$CPLUS_INCLUDE_PATH```, and ```/path/to/lib``` to both ```$LIBRARY_PATH``` and ```$LD_LIBRARY_PATH```.
+- HTSlib: After compiling, there would be ```include``` and ```lib``` under your specified folder. You need append ```/path/to/include``` to ```$CPLUS_INCLUDE_PATH```, and add ```/path/to/lib``` to both ```$LIBRARY_PATH``` and ```$LD_LIBRARY_PATH```.
 - MaxBin2 : ```run_MaxBin.pl``` should be avalible.
 - MetaBat2: ```jgi_summarize_bam_contig_depths``` and ```metabat2``` should be avalible.
 
