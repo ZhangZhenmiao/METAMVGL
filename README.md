@@ -4,7 +4,7 @@
 - GCC with C++11, [HTSlib](https://github.com/samtools/htslib).
 - Python3 with [numpy](https://numpy.org/install), [scipy](https://www.scipy.org/install.html), [networkx](http://networkx.github.io) and [Bio](https://biopython.org/wiki/Getting_Started).
 - Initial binning tools [MaxBin2](https://sourceforge.net/projects/maxbin2) and [MetaBat2](https://bitbucket.org/berkeleylab/metabat/src/master).
-- Alignment tools [bwa](https://github.com/lh3/bwa) and [samtools](https://github.com/samtools).
+- Alignment tools [bwa](https://github.com/lh3/bwa) and [samtools](https://github.com/samtools/samtools).
 
 ## Environment variables
 - HTSlib: After compiling, there would be ```include``` and ```lib``` under your specified folder. You need append ```/path/to/include``` to ```$CPLUS_INCLUDE_PATH```, and add ```/path/to/lib``` to both ```$LIBRARY_PATH``` and ```$LD_LIBRARY_PATH```.
