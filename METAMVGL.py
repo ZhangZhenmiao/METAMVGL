@@ -8,6 +8,7 @@ import scipy as sp
 from scipy.sparse import linalg
 import networkx as nx
 
+
 def remove_ambiguous_label(G, contigs_bin):
     remove_labels = list()
     for key in contigs_bin:
@@ -22,6 +23,7 @@ def remove_ambiguous_label(G, contigs_bin):
             remove_labels.append(key)
     for key in remove_labels:
         contigs_bin.pop(key)
+
 
 def getClosestLabelledVertices(G, node, contigs_bin):
     queu_l = [list(G.neighbors(node))]
@@ -50,11 +52,13 @@ def getClosestLabelledVertices(G, node, contigs_bin):
                 queu_l.append(temp2)
     return labelled
 
+
 def remove_ambiguous_label_deeper(G, contigs_bin):
     remove_labels = list()
     for key in contigs_bin:
         closest_neighbours = getClosestLabelledVertices(G, key, contigs_bin)
-        if not len(closest_neighbours): continue
+        if not len(closest_neighbours):
+            continue
         neighbours_have_same_label = True
         for neighbour in closest_neighbours:
             if neighbour in contigs_bin:
@@ -66,26 +70,34 @@ def remove_ambiguous_label_deeper(G, contigs_bin):
     for key in remove_labels:
         contigs_bin.pop(key)
 
+
 def non_isolated_contigs(G, contigs_bin):
     non_isolated = set()
     for i in G.nodes:
         if i not in non_isolated and i in contigs_bin:
-            if not len(list(G.neighbors(i))): continue
+            if not len(list(G.neighbors(i))):
+                continue
             component = set()
             component.add(i)
             length = len(component)
-            for neighbor in G.neighbors(i): component.add(neighbor)
-            while length!= len(component):
+            for neighbor in G.neighbors(i):
+                component.add(neighbor)
+            while length != len(component):
                 length = len(component)
                 for j in component.copy():
-                    for neighbor in G.neighbors(j): component.add(neighbor)
-            for j in component: non_isolated.add(j)
+                    for neighbor in G.neighbors(j):
+                        component.add(neighbor)
+            for j in component:
+                non_isolated.add(j)
     return_list = list()
     for item in non_isolated:
-        if item in contigs_bin: return_list.append(item)
+        if item in contigs_bin:
+            return_list.append(item)
     for item in non_isolated:
-        if item not in return_list: return_list.append(item)
+        if item not in return_list:
+            return_list.append(item)
     return return_list
+
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--contigs", required=True, help="path to contigs file")
@@ -116,7 +128,8 @@ for row in readCSV:
 csvfile.close()
 n_bins = 0
 for i in all_bins:
-    if i > n_bins: n_bins = i
+    if i > n_bins:
+        n_bins = i
 n_bins += 1
 
 assembly_graph = nx.Graph()
@@ -144,12 +157,14 @@ while line != "":
         PE_graph.add_node(contig)
         if contig in contigs_bin:
             bin_link_left = contigs_bin[contig]
-        else: bin_link_left = -1
+        else:
+            bin_link_left = -1
     elif line[-1] == ';':
         PE_graph.add_node(strings[0])
         if strings[0] in contigs_bin:
             bin_link_right = contigs_bin[strings[0]]
-        else: bin_link_right = -1
+        else:
+            bin_link_right = -1
         if bin_link_left == -1 or bin_link_right == -1 or bin_link_left == bin_link_right:
             PE_graph.add_edge(contig, strings[0])
     line = graph.readline()
@@ -168,8 +183,12 @@ non_isolated = non_isolated_contigs(merged_graph, contigs_bin)
 print('non isolated contigs:', len(non_isolated))
 binned_cnt = 0
 for contig in non_isolated:
-    if contig in contigs_bin: binned_cnt += 1
+    if contig in contigs_bin:
+        binned_cnt += 1
 print('non isolated binned contigs:', binned_cnt)
+if (binned_cnt == 0):
+    print("There is no connected components for the initial binned contigs in either the assembly graph or the PE graph. Please check your input or just use the initial binning results.")
+    exit(0)
 
 degree = list()
 for i in range(len(non_isolated)):
@@ -184,8 +203,9 @@ PE_graph_adjacent = nx.adjacency_matrix(PE_graph, nodelist=non_isolated)
 
 F = np.zeros([len(non_isolated), n_bins])
 for i in range(len(non_isolated)):
-    if non_isolated[i] in contigs_bin: F[i, contigs_bin[non_isolated[i]]] = 1
-F_l = sp.sparse.csc_matrix(F[:binned_cnt,], dtype=np.float64)
+    if non_isolated[i] in contigs_bin:
+        F[i, contigs_bin[non_isolated[i]]] = 1
+F_l = sp.sparse.csc_matrix(F[:binned_cnt, ], dtype=np.float64)
 assembly_graph_L = nx.normalized_laplacian_matrix(assembly_graph, nodelist=non_isolated)
 PE_graph_L = nx.normalized_laplacian_matrix(PE_graph, nodelist=non_isolated)
 
@@ -205,21 +225,27 @@ for i in range(max_iter):
     F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
     obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
     obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
+    # the iterations should stop if the graph is too sparse to get updated weights
+    if (obj1 == 0 or obj2 == 0):
+        break
     alpha[0] = 0.5/obj1
     alpha[1] = 0.5/obj2
     Obj_fun.append(obj1 + obj2)
     print("Iteration", i, " Alpla0", alpha[0], " Alpla1", alpha[1], " Obj_value", Obj_fun[i])
-    if i >= 1 and (Obj_fun[i-1]-Obj_fun[i])/Obj_fun[i-1] < thresh: break
+    if i >= 1 and (Obj_fun[i-1]-Obj_fun[i])/Obj_fun[i-1] < thresh:
+        break
 
 # F = F.toarray()
 maxCluster = F.argmax(axis=1)
 maxValue = F.max(axis=1).toarray()
 for i in range(len(non_isolated)):
-    if maxValue[i, 0] != 0: contigs_bin[non_isolated[i]] = maxCluster[i, 0]
+    if maxValue[i, 0] != 0:
+        contigs_bin[non_isolated[i]] = maxCluster[i, 0]
 print('final binned contigs:', len(contigs_bin))
 remove_ambiguous_label(merged_graph, contigs_bin)
 print('final binned contigs after remove ambiguous:', len(contigs_bin))
-if not os.path.isdir(output): os.system("mkdir " + output)
+if not os.path.isdir(output):
+    os.system("mkdir " + output)
 final_out = open(output + "/binning_result.csv", 'w')
 for contig in contigs_bin:
     final_out.write(contig + ',' + str(contigs_bin[contig] + 1) + '\n')
@@ -230,13 +256,18 @@ contigs_map = {}
 header = ""
 content = ""
 for line in contigs_file:
-    if line == "": continue
+    if line == "":
+        continue
     if line[0] == '>':
-        if header != "": contigs_map[header] = content
-        if assembler == 'metaspades': header = line.split('_')[0][1:] + '_' + line.split('_')[1]
-        elif assembler == 'megahit': header = line.split()[0][1:]
+        if header != "":
+            contigs_map[header] = content
+        if assembler == 'metaspades':
+            header = line.split('_')[0][1:] + '_' + line.split('_')[1]
+        elif assembler == 'megahit':
+            header = line.split()[0][1:]
         content = ""
-    else: content += line.strip()
+    else:
+        content += line.strip()
 contigs_map[header] = content
 contigs_file.close()
 
@@ -244,14 +275,17 @@ bin_map = {}
 cluster = output + "/binning_result.csv"
 cluster_file = open(cluster, 'r')
 for line in cluster_file:
-    if line == "": continue
+    if line == "":
+        continue
     items = line.strip().split(',')
-    if items[1] not in bin_map: bin_map[items[1]] = []
+    if items[1] not in bin_map:
+        bin_map[items[1]] = []
     bin_map[items[1]].append(items[0])
 cluster_file.close()
 
 for file in os.listdir(output):
-    if ".fasta" in file: os.system("rm " + output + '/' + file)
+    if ".fasta" in file:
+        os.system("rm " + output + '/' + file)
 for bin in bin_map:
     out = open(output + "/cluster." + bin + ".fasta", 'w')
     for header in bin_map[bin]:
