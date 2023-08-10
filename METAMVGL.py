@@ -221,10 +221,14 @@ for i in range(max_iter):
     all_trans = sp.sparse.linalg.inv(all_degree).dot(all_adjacant)
     all_trans_uu = all_trans[binned_cnt:, binned_cnt:]
     all_trans_ul = all_trans[binned_cnt:, :binned_cnt]
-    F_u = sp.sparse.linalg.inv(sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu).dot(all_trans_ul).dot(F_l)
-    F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
-    obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
-    obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
+    try:
+        F_u = sp.sparse.linalg.inv(sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu).dot(all_trans_ul).dot(F_l)
+        F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
+        obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
+        obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
+    # the iterations should stop if sp.sparse fails due to machine accuracy
+    except:
+        break
     # the iterations should stop if the graph is too sparse to get updated weights
     if (obj1 == 0 or obj2 == 0):
         break
