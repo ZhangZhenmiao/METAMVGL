@@ -209,35 +209,39 @@ F_l = sp.sparse.csc_matrix(F[:binned_cnt, ], dtype=np.float64)
 assembly_graph_L = nx.normalized_laplacian_matrix(assembly_graph, nodelist=non_isolated)
 PE_graph_L = nx.normalized_laplacian_matrix(PE_graph, nodelist=non_isolated)
 
-# assembly_graph_degree, PE_graph_degree: sparse
-# assembly_graph_adjacent, PE_graph_adjacent: sparse
-# assembly_graph_L, PE_graph_L: sparse
-# F: sparse
-Obj_fun = list()
-alpha = np.array([0.5, 0.5])
-for i in range(max_iter):
-    all_degree = alpha[0]*assembly_graph_degree + alpha[1]*PE_graph_degree
-    all_adjacant = alpha[0]*assembly_graph_adjacent + alpha[1]*PE_graph_adjacent
-    all_trans = sp.sparse.linalg.inv(all_degree).dot(all_adjacant)
-    all_trans_uu = all_trans[binned_cnt:, binned_cnt:]
-    all_trans_ul = all_trans[binned_cnt:, :binned_cnt]
-    try:
-        F_u = sp.sparse.linalg.inv(sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu).dot(all_trans_ul).dot(F_l)
-        F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
-        obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
-        obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
-    # the iterations should stop if sp.sparse fails due to machine accuracy
-    except:
-        break
-    # the iterations should stop if the graph is too sparse to get updated weights
-    if (obj1 == 0 or obj2 == 0):
-        break
-    alpha[0] = 0.5/obj1
-    alpha[1] = 0.5/obj2
-    Obj_fun.append(obj1 + obj2)
-    print("Iteration", i, " Alpla0", alpha[0], " Alpla1", alpha[1], " Obj_value", Obj_fun[i])
-    if i >= 1 and (Obj_fun[i-1]-Obj_fun[i])/Obj_fun[i-1] < thresh:
-        break
+# if there is no unbinned non-isolated contigs, skip iteration (METAMVGL will not change the initial binning)
+if (binned_cnt == non_isolated):
+    F = F_l
+else:
+    # assembly_graph_degree, PE_graph_degree: sparse
+    # assembly_graph_adjacent, PE_graph_adjacent: sparse
+    # assembly_graph_L, PE_graph_L: sparse
+    # F: sparse
+    Obj_fun = list()
+    alpha = np.array([0.5, 0.5])
+    for i in range(max_iter):
+        all_degree = alpha[0]*assembly_graph_degree + alpha[1]*PE_graph_degree
+        all_adjacant = alpha[0]*assembly_graph_adjacent + alpha[1]*PE_graph_adjacent
+        all_trans = sp.sparse.linalg.inv(all_degree).dot(all_adjacant)
+        all_trans_uu = all_trans[binned_cnt:, binned_cnt:]
+        all_trans_ul = all_trans[binned_cnt:, :binned_cnt]
+        try:
+            F_u = sp.sparse.linalg.inv(sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu).dot(all_trans_ul).dot(F_l)
+            F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
+            obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
+            obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
+        # the iterations should stop if sp.sparse fails due to machine accuracy
+        except RuntimeError:
+            break
+        # the iterations should stop if the graph is too sparse to get updated weights
+        if (obj1 == 0 or obj2 == 0):
+            break
+        alpha[0] = 0.5/obj1
+        alpha[1] = 0.5/obj2
+        Obj_fun.append(obj1 + obj2)
+        print("Iteration", i, " Alpla0", alpha[0], " Alpla1", alpha[1], " Obj_value", Obj_fun[i])
+        if i >= 1 and (Obj_fun[i-1]-Obj_fun[i])/Obj_fun[i-1] < thresh:
+            break
 
 # F = F.toarray()
 maxCluster = F.argmax(axis=1)
