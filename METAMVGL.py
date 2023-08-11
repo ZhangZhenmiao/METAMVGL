@@ -210,7 +210,7 @@ assembly_graph_L = nx.normalized_laplacian_matrix(assembly_graph, nodelist=non_i
 PE_graph_L = nx.normalized_laplacian_matrix(PE_graph, nodelist=non_isolated)
 
 # if there is no unbinned non-isolated contigs, skip iteration (METAMVGL will not change the initial binning)
-if (binned_cnt == non_isolated):
+if (binned_cnt == len(non_isolated)):
     F = F_l
 else:
     # assembly_graph_degree, PE_graph_degree: sparse
