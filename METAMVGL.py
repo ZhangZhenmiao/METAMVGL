@@ -226,7 +226,16 @@ else:
         all_trans_uu = all_trans[binned_cnt:, binned_cnt:]
         all_trans_ul = all_trans[binned_cnt:, :binned_cnt]
         try:
-            F_u = sp.sparse.linalg.inv(sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu).dot(all_trans_ul).dot(F_l)
+            eye = sp.sparse.eye(all_trans_uu.shape[0], format='csc', dtype=np.float64) - all_trans_uu
+
+            # for whatever reason, inv(<1x1 sparse matrix>) returns an array
+            # instead of a matrix. No use taking the inverse anyway.
+            if eye.shape == (1, 1):
+                inv = sp.sparse.csc_matrix(sp.sparse.linalg.inv(eye))
+            else:
+                inv = sp.sparse.linalg.inv(eye)
+
+            F_u = inv.dot(all_trans_ul).dot(F_l)
             F = sp.sparse.vstack([F_l, F_u], format='csc', dtype=np.float64)
             obj1 = math.sqrt(F.T.dot(assembly_graph_L).dot(F).diagonal().sum())
             obj2 = math.sqrt(F.T.dot(PE_graph_L).dot(F).diagonal().sum())
